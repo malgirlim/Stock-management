@@ -1,16 +1,18 @@
 <template>
   <div class="memo">
     <div class="act">
-      <input
-        type="text"
-        class="form-control"
-        id="barcode_input"
-        @keyup.enter="add()"
-        v-model="state.form.message"
-        ref="cursor"
-        placeholder="바코드를 입력하려면 여기를 터치해주세요."
-        autofocus
-      />
+      <div class="bootstrap-iso">
+        <input
+          type="text"
+          class="form-control is-invalid"
+          id="barcode_input"
+          @keyup.enter="add()"
+          v-model="state.form.message"
+          ref="cursor"
+          placeholder="바코드를 입력하려면 여기를 터치해주세요."
+          autofocus
+        />
+      </div>
     </div>
     <div class="button_event">
       <button
@@ -31,13 +33,24 @@
       </button>
       <button
         type="button"
-        class="btn btn-danger"
+        class="btn btn-warning"
         style="margin: 15px 5px 0 5px"
         @click="button_bad()"
       >
         불량 등록
       </button>
+      <span class="init">
+        <button
+          type="button"
+          class="btn btn-danger"
+          style="margin: 15px 5px 0 5px"
+          @click="button_init()"
+        >
+          초기화
+        </button>
+      </span>
     </div>
+
     <ul>
       <li v-for="d in state.data" :key="d.id">
         <button
@@ -179,6 +192,13 @@ export default {
       })
     }
 
+    // 목록 초기화
+    const init = () => {
+      axios.post('/api/memos/init').then((res) => {
+        state.data = res.data
+      })
+    }
+
     axios.get('/api/memos').then((res) => {
       state.data = res.data
     })
@@ -191,7 +211,8 @@ export default {
       remove,
       receive,
       deliver,
-      bad
+      bad,
+      init
     }
   },
   mounted() {
@@ -221,6 +242,13 @@ export default {
       } else {
         return
       }
+    },
+    button_init() {
+      if (confirm('목록을 초기화 하시겠습니까?') == true) {
+        this.init()
+      } else {
+        return
+      }
     }
   }
 }
@@ -231,6 +259,11 @@ export default {
   .act {
     text-align: right;
     padding: 10px 10px 5px 5px;
+  }
+  .button_event {
+    span.init {
+      float: right;
+    }
   }
   ul {
     list-style: none;
@@ -248,5 +281,25 @@ export default {
       margin: 10px;
     }
   }
+}
+.bootstrap-iso .formden_header h2,
+.bootstrap-iso .formden_header p,
+.bootstrap-iso form {
+  font-family: Arial, Helvetica, sans-serif;
+  color: black;
+}
+.bootstrap-iso form button,
+.bootstrap-iso form button:hover {
+  color: white !important;
+}
+.bootstrap-iso .form-control:focus {
+  border-color: #e96666;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 8px rgba(233, 102, 102, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 8px rgba(233, 102, 102, 0.6);
+}
+.asteriskField {
+  color: red;
 }
 </style>

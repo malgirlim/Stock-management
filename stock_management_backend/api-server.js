@@ -241,6 +241,26 @@ app.post("/api/memos/bad", async (req, res) => {
   }
 });
 
+// 목록 초기화
+app.post("/api/memos/init", async (req, res) => {
+  try {
+    const Pool = await pool;
+    // insert
+    await Pool.request().query("DELETE FROM mhp_test");
+
+    // select
+    const result = await Pool.request().query(
+      "SELECT mhp.*, item.ITEM_NAME AS name, item.ITEM_SIZE AS size FROM [mhp_test] AS mhp INNER JOIN [MASTER_ITEM_TB] AS item ON mhp.content = item.ITEM_SKU"
+    );
+    // console.log(result);
+    res.send(result.recordset);
+  } catch (err) {
+    // console.log(err);
+    res.status(500);
+    res.send(err.message);
+  }
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
