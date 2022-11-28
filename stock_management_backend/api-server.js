@@ -9,49 +9,21 @@ app.use(bodyParser.json());
 
 // 조회
 app.get("/api/memos", async (req, res) => {
-  // const result = await database.run("SELECT * FROM memos ORDER BY ID DESC");
-  // const result = await database.run(
-  //   "SELECT memos.*, items.name, items.size FROM memos INNER JOIN items ON memos.content = items.content"
-  // );
-  // res.send(result);
-  try {
-    const Pool = await pool;
-    const result = await Pool.request().query(
-      "SELECT mhp.*, item.ITEM_NAME AS name, item.ITEM_SIZE AS size FROM [mhp_test] AS mhp INNER JOIN [MASTER_ITEM_TB] AS item ON mhp.content = item.ITEM_SKU"
-    );
-    // console.log(result);
-    res.send(result.recordset);
-  } catch (err) {
-    // console.log(err);
-    res.status(500);
-    res.send(err.message);
-  }
+  res.send("사용하지 않는 함수");
 });
 
 // 추가
 app.post("/api/memos", async (req, res) => {
-  // await database.run(`INSERT INTO memos (content) VALUES (?)`, [
-  //   req.body.content,
-  // ]);
-  // const result = await database.run(
-  //   "SELECT memos.*, items.name, items.size FROM memos INNER JOIN items ON memos.content = items.content"
-  // );
-  // res.send(result);
+  // try
   try {
     const Pool = await pool;
-
-    // insert
-    await Pool.request()
+    // select
+    const result = await Pool.request()
       .input("content", sql.NVarChar, req.body.content)
       .query(
-        "IF (SELECT ITEM_SKU FROM MASTER_ITEM_TB WHERE ITEM_SKU = @content) is not NULL BEGIN INSERT INTO [mhp_test] (content) VALUES (@content) END"
+        "SELECT ITEM_SKU AS content, ITEM_NAME AS name, ITEM_SIZE AS size, 1 AS number FROM MASTER_ITEM_TB WHERE ITEM_SKU = @content"
       );
-
-    // select
-    const result = await Pool.request().query(
-      "SELECT mhp.*, item.ITEM_NAME AS name, item.ITEM_SIZE AS size FROM [mhp_test] AS mhp INNER JOIN [MASTER_ITEM_TB] AS item ON mhp.content = item.ITEM_SKU"
-    );
-    // console.log(result);
+    // console.log(result.recordset);
     res.send(result.recordset);
   } catch (err) {
     // console.log(err);
