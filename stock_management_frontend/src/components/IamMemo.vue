@@ -114,7 +114,7 @@ export default {
     })
     // 추가
     const add = () => {
-      const content = state.form.message
+      const content = state.form.message.trim()
 
       if (!content) {
         Swal.fire({
@@ -138,7 +138,7 @@ export default {
       axios.post('/api/memos', { content }).then((res) => {
         state.data = JSON.parse(localStorage.getItem('data'))
         // console.log(res.data[0])
-        state.data.push(res.data[0])
+        state.data.unshift(res.data[0])
         localStorage.setItem('data', JSON.stringify(state.data))
       })
       state.form.message = ''
@@ -175,37 +175,55 @@ export default {
         },
         inputValue: state.data.find((d) => d.content === content).number
       }).then((result) => {
-        const num = result.value
+        const num = Number(result.value)
         if (!num) return
         var i = state.data.findIndex((d) => d.content === content)
-        state.data[i].number = state.data[i].number + num
+        state.data[i].number = num
         localStorage.setItem('data', JSON.stringify(state.data))
       })
     }
 
     // 삭제
-    const remove = (id) => {
-      axios.delete('/api/memos/' + id).then((res) => {
-        state.data = res.data
-      })
+    const remove = (content) => {
+      var i = state.data.findIndex((d) => d.content === content)
+      state.data.splice(i, 1)
+      localStorage.setItem('data', JSON.stringify(state.data))
     }
 
     // 입고
     const receive = () => {
-      console.log('입고버튼을 눌렀습니다.')
-      axios.post('/api/memos/receive').then((res) => {
+      if (state.data.length < 1) {
+        Swal.fire({
+          icon: 'error',
+          title: '입력된 데이터가 없습니다.',
+          showConfirmButton: false,
+          timer: 1000
+        })
+        return
+      }
+      axios.post('/api/memos/receive', state.data).then((res) => {
         Swal.fire({
           icon: 'success',
           title: '등록되었습니다.',
           showConfirmButton: false,
           timer: 1500
         })
-        state.data = res.data
+        console.log(res.data)
+        localStorage.setItem('data', JSON.stringify([]))
+        state.data = JSON.parse(localStorage.getItem('data'))
       })
     }
     // 출고
     const deliver = () => {
-      console.log('출고버튼을 눌렀습니다.')
+      if (state.data.length < 1) {
+        Swal.fire({
+          icon: 'error',
+          title: '입력된 데이터가 없습니다.',
+          showConfirmButton: false,
+          timer: 1000
+        })
+        return
+      }
       axios.post('/api/memos/deliver').then((res) => {
         Swal.fire({
           icon: 'success',
@@ -213,12 +231,22 @@ export default {
           showConfirmButton: false,
           timer: 1500
         })
-        state.data = res.data
+        console.log(res.data)
+        localStorage.setItem('data', JSON.stringify([]))
+        state.data = JSON.parse(localStorage.getItem('data'))
       })
     }
     // 불량
     const bad = () => {
-      console.log('불량버튼을 눌렀습니다.')
+      if (state.data.length < 1) {
+        Swal.fire({
+          icon: 'error',
+          title: '입력된 데이터가 없습니다.',
+          showConfirmButton: false,
+          timer: 1000
+        })
+        return
+      }
       axios.post('/api/memos/bad').then((res) => {
         Swal.fire({
           icon: 'success',
@@ -226,7 +254,9 @@ export default {
           showConfirmButton: false,
           timer: 1500
         })
-        state.data = res.data
+        console.log(res.data)
+        localStorage.setItem('data', JSON.stringify([]))
+        state.data = JSON.parse(localStorage.getItem('data'))
       })
     }
 
@@ -238,8 +268,8 @@ export default {
         showConfirmButton: false,
         timer: 1000
       })
-      localStorage.clear('data')
-      state.data = []
+      localStorage.setItem('data', JSON.stringify([]))
+      state.data = JSON.parse(localStorage.getItem('data'))
     }
 
     axios.get('/api/memos').then(() => {
