@@ -119,7 +119,7 @@ export default {
       if (!content) {
         Swal.fire({
           icon: 'info',
-          title: '입력한 코드가 없습니다.',
+          title: '<div style="font-size:90%">입력한 코드가 없습니다.</div>',
           showConfirmButton: false,
           timer: 1000
         })
@@ -128,7 +128,7 @@ export default {
       if (state.data.find((d) => d.content === content)) {
         Swal.fire({
           icon: 'error',
-          title: '이미 입력된 코드입니다.',
+          title: '<div style="font-size:90%">이미 입력된 코드입니다.</div>',
           showConfirmButton: false,
           timer: 1000
         })
@@ -136,10 +136,22 @@ export default {
         return
       }
       axios.post('/api/memos', { content }).then((res) => {
-        state.data = JSON.parse(localStorage.getItem('data'))
-        // console.log(res.data[0])
-        state.data.unshift(res.data[0])
-        localStorage.setItem('data', JSON.stringify(state.data))
+        if (res.data[0] != null) {
+          state.data = JSON.parse(localStorage.getItem('data'))
+          // console.log(res.data[0])
+          state.data.unshift(res.data[0])
+          localStorage.setItem('data', JSON.stringify(state.data))
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title:
+              '<div style="font-size:90%">등록되지 않은 코드입니다.\n다시 입력해 주세요.</div>',
+            showConfirmButton: false,
+            timer: 1500
+          })
+          state.form.message = ''
+          return
+        }
       })
       state.form.message = ''
     }
@@ -195,7 +207,7 @@ export default {
       if (state.data.length < 1) {
         Swal.fire({
           icon: 'error',
-          title: '입력된 데이터가 없습니다.',
+          title: '<div style="font-size:90%">입력된 데이터가 없습니다.</div>',
           showConfirmButton: false,
           timer: 1000
         })
@@ -204,7 +216,7 @@ export default {
       axios.post('/api/memos/receive', state.data).then((res) => {
         Swal.fire({
           icon: 'success',
-          title: '등록되었습니다.',
+          title: '<div style="font-size:90%">등록되었습니다.</div>',
           showConfirmButton: false,
           timer: 1500
         })
@@ -218,7 +230,7 @@ export default {
       if (state.data.length < 1) {
         Swal.fire({
           icon: 'error',
-          title: '입력된 데이터가 없습니다.',
+          title: '<div style="font-size:90%">입력된 데이터가 없습니다.</div>',
           showConfirmButton: false,
           timer: 1000
         })
@@ -227,7 +239,7 @@ export default {
       axios.post('/api/memos/deliver').then((res) => {
         Swal.fire({
           icon: 'success',
-          title: '등록되었습니다.',
+          title: '<div style="font-size:90%">등록되었습니다.</div>',
           showConfirmButton: false,
           timer: 1500
         })
@@ -241,7 +253,7 @@ export default {
       if (state.data.length < 1) {
         Swal.fire({
           icon: 'error',
-          title: '입력된 데이터가 없습니다.',
+          title: '<div style="font-size:90%">입력된 데이터가 없습니다.</div>',
           showConfirmButton: false,
           timer: 1000
         })
@@ -250,7 +262,7 @@ export default {
       axios.post('/api/memos/bad').then((res) => {
         Swal.fire({
           icon: 'success',
-          title: '등록되었습니다.',
+          title: '<div style="font-size:90%">등록되었습니다.</div>',
           showConfirmButton: false,
           timer: 1500
         })
@@ -264,7 +276,7 @@ export default {
     const init = () => {
       Swal.fire({
         icon: 'success',
-        title: '초기화 되었습니다.',
+        title: '<div style="font-size:90%">초기화 되었습니다.</div>',
         showConfirmButton: false,
         timer: 1000
       })
