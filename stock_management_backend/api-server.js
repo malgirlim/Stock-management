@@ -39,11 +39,12 @@ app.post("/api/memos/receive", async (req, res) => {
     const Pool = await pool;
 
     for (var i = 0; i < req.body.length; i++) {
+      console.log(req.body[i].content);
       // insert
       await Pool.request()
         .input("content", sql.NVarChar, req.body[i].content)
         .input("number", sql.Int, req.body[i].number)
-        .query(`exec [MANAGE_ITEM_RECEIVE_MOBILE2_INS_SP] @content, @number`);
+        .query(`exec [MANAGE_ITEM_RECEIVE_MOBILE2_INS_SP] '@content', @number`);
     }
     res.send("POST 입고");
   } catch (err) {
@@ -62,7 +63,7 @@ app.post("/api/memos/deliver", async (req, res) => {
       await Pool.request()
         .input("content", sql.NVarChar, req.body[i].content)
         .input("number", sql.Int, req.body[i].number)
-        .query(`exec [MANAGE_ITEM_DELIVER_MOBILE2_INS_SP] @content, @number`);
+        .query(`exec [MANAGE_ITEM_DELIVER_MOBILE2_INS_SP] '@content', @number`);
     }
     res.send("POST 출고");
   } catch (err) {
@@ -81,7 +82,7 @@ app.post("/api/memos/bad", async (req, res) => {
       await Pool.request()
         .input("content", sql.NVarChar, req.body[i].content)
         .input("number", sql.Int, req.body[i].number)
-        .query(`exec [MANAGE_ITEM_BAD_MOBILE2_INS_SP] @content, @number`);
+        .query(`exec [MANAGE_ITEM_BAD_MOBILE2_INS_SP] '@content', @number`);
     }
     res.send("POST 불량");
   } catch (err) {
