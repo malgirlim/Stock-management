@@ -114,15 +114,15 @@ export default {
     })
     // 추가
     const add = () => {
-      const content = state.form.message.trim()
+      const content = state.form.message.trim().toUpperCase()
 
       if (!content) {
-        Swal.fire({
+        /*Swal.fire({    //갤럭시 단말기 오류발생으로 인한 코드삭제
           icon: 'info',
           title: '<div style="font-size:90%">입력한 코드가 없습니다.</div>',
           showConfirmButton: false,
           timer: 1000
-        })
+        })*/
         return
       }
       if (state.data.find((d) => d.content === content)) {
